@@ -4,12 +4,12 @@ provider "aws" {
     backend "s3" {
         bucket = "zaafranebucket"
         key    = "terraform.tfstate"
-        region = "eu-west-1"  // Update this to the actual region of your S3 bucket
+        region = "eu-west-1"  
     }
 }
 
 resource "aws_instance" "example" {
-  ami           = "ami-0b17db95571fd002c"  # Replace with your desired AMI
+  ami           = "ami-0b17db95571fd002c"
   instance_type = "t2.micro"
 
   tags = {
