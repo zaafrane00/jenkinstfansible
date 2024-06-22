@@ -1,5 +1,11 @@
 provider "aws" {
   region = "eu-west-1"
+
+    backend "s3" {
+        bucket = "zaafranebucket"
+        key    = "terraform.tfstate"
+        region = "eu-west-1"  // Update this to the actual region of your S3 bucket
+    }
 }
 
 resource "aws_instance" "example" {
