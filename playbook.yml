@@ -22,16 +22,16 @@
         name: docker
         state: present
 
-    - name: Pull Docker image from DockerHub
-      docker_image:
-        name: your-dockerhub-username/your-docker-image
-        tag: latest
-        source: pull
+    # - name: Pull Docker image from DockerHub
+    #   docker_image:
+    #     name: your-dockerhub-username/your-docker-image
+    #     tag: latest
+    #     source: pull
 
-    - name: Run Docker container
-      docker_container:
-        name: my_container
-        image: your-dockerhub-username/your-docker-image
-        state: started
-        ports:
-          - "80:80"
+    # - name: Run Docker container
+    #   docker_container:
+    #     name: my_container
+    #     image: your-dockerhub-username/your-docker-image
+    #     state: started
+    #     ports:
+    #       - "80:80"
