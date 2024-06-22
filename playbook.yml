@@ -1,0 +1,37 @@
+---
+- hosts: ec2-instance
+  become: true
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Install Docker Python module
+      pip:
+        name: docker
+        state: present
+
+    - name: Pull Docker image from DockerHub
+      docker_image:
+        name: your-dockerhub-username/your-docker-image
+        tag: latest
+        source: pull
+
+    - name: Run Docker container
+      docker_container:
+        name: my_container
+        image: your-dockerhub-username/your-docker-image
+        state: started
+        ports:
+          - "80:80"
