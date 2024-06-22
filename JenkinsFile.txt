@@ -1,0 +1,52 @@
+pipeline {
+    agent {label "worker1"}
+
+    stages {
+        stage('SCM') {
+            steps {
+                checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[credentialsId: 'gitlab', url: 'https://github.com/zaafrane00/jenkinstfansible.git']])
+            }
+        }
+        
+        stage('Terraform Init') {
+            steps {
+                sh 'pwd'
+                sh 'ls -l'
+                sh 'terraform init'
+            }
+        }
+        
+        stage('Terraform Apply') {
+            steps {
+                script {
+                    def tfApply = sh(script: 'terraform apply -auto-approve', returnStdout: true).trim()
+                    echo tfApply
+                }
+            }
+        }
+         stage('Doownload key') {
+            steps {
+                script {
+                    sh 'aws s3 cp s3://zaafranebucket/myAWSKey.pem .'
+                }
+            }
+        }
+        stage('Get Terraform Output') {
+            steps {
+                script {
+                    def instanceIp = sh(script: 'terraform output -raw instance_ip', returnStdout: true).trim()
+                    echo "Instance IP: ${instanceIp}"
+                    writeFile file: 'inventory', text: "[ec2-instance]\n${instanceIp} ansible_user=ec2-user ansible_ssh_private_key_file=./myAWSKey.pem"
+                }
+            }
+        }
+           stage('Run Ansible Playbook') {
+            steps {
+                ansiblePlaybook(
+                    playbook: 'playbook.yml',
+                    inventory: 'inventory'
+                )
+            }
+        }
+    }
+}
